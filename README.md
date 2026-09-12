@@ -1,15 +1,9 @@
-Absolutely. Below is a polished, hackathon-ready README that highlights the full scope of what you have actually built without overstating the one thing still pending: a real supported-region CALL-E phone call.
 
-I’ve also structured it around what the hackathon judges explicitly care about: real-world impact, idea quality, technical implementation, and product/demo quality. 
-
-Copy this into your `README.md`.
-
-````markdown
 # ☎️ ConfirmCall
 
 ### AI-powered appointment confirmation and no-show reduction for service businesses
 
-> **Google Calendar → CALL-E Voice Agent → Structured Decision → Calendar Writeback → Dashboard**
+> Google Calendar → CALL-E Voice Agent → Structured Decision → Calendar Writeback → Dashboard
 
 ConfirmCall is an AI appointment confirmation agent that helps appointment-based businesses reduce no-shows, save staff time, and capture customer intent automatically.
 
