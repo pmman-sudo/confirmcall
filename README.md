@@ -1,4 +1,3 @@
-
 # ☎️ ConfirmCall
 
 ### AI-powered appointment confirmation and no-show reduction for service businesses
@@ -18,10 +17,15 @@ Appointment no-shows create a simple but expensive problem.
 Businesses such as:
 
 - salons,
+
 - consultants,
+
 - repair services,
+
 - tutors,
+
 - service providers,
+
 - and other appointment-based businesses
 
 often spend hours manually contacting customers to determine whether they still plan to attend.
@@ -33,35 +37,61 @@ ConfirmCall turns this manual process into an automated workflow.
 Instead of:
 
 ```text
+
 Appointment created
-        ↓
+
+        ↓
+
 Staff remembers to call
-        ↓
+
+        ↓
+
 Customer responds
-        ↓
+
+        ↓
+
 Staff manually records response
-        ↓
+
+        ↓
+
 Calendar updated
-````
+
+```
 
 ConfirmCall provides:
 
 ```text
+
 Appointment created
-        ↓
+
+        ↓
+
 Google Calendar
-        ↓
+
+        ↓
+
 ConfirmCall
-        ↓
+
+        ↓
+
 CALL-E Voice Agent
-        ↓
+
+        ↓
+
 Customer response
-        ↓
+
+        ↓
+
 Structured decision
-        ↓
+
+        ↓
+
 Google Calendar updated automatically
-        ↓
+
+        ↓
+
 Dashboard reflects result
+
 ```
 
 ---
@@ -75,35 +105,57 @@ ConfirmCall uses Google Calendar as both its appointment source and operational 
 It can:
 
 * authenticate through Google OAuth 2.0,
+
 * read upcoming calendar events,
+
 * identify ConfirmCall-enabled appointments,
+
 * extract customer and appointment metadata,
+
 * determine current appointment status,
+
 * update appointment outcomes,
+
 * store CALL-E call IDs,
+
 * store requested reschedule times,
+
 * and update event titles with visual status indicators.
 
 Example ConfirmCall Calendar metadata:
 
 ```text
+
 CONFIRMCALL=true
+
 CUSTOMER_NAME=Alice Demo
-CUSTOMER_PHONE=+15551234567
+
+CUSTOMER_PHONE=+12025550123
+
 SERVICE=Haircut Appointment
+
 STATUS=pending
+
 ```
 
 After processing:
 
 ```text
+
 CONFIRMCALL=true
+
 CUSTOMER_NAME=Clara Demo
-CUSTOMER_PHONE=+15551234567
+
+CUSTOMER_PHONE=+12025550123
+
 SERVICE=Service Visit
+
 STATUS=reschedule_requested
+
 REQUESTED_TIME=Monday at 2:00 PM
+
 CALL_ID=demo-call-clara
+
 ```
 
 ---
@@ -115,17 +167,25 @@ ConfirmCall integrates with the CALL-E Python SDK.
 The CALL-E service layer can:
 
 * construct personalized appointment confirmation tasks,
+
 * create CALL-E calls,
+
 * provide structured result schemas,
+
 * attach event metadata,
+
 * use idempotency keys,
+
 * wait for the completed call,
+
 * retrieve structured results,
+
 * and convert those results into ConfirmCall decisions.
 
 Example task:
 
 ```text
+
 You are ConfirmCall, an appointment confirmation assistant.
 
 Speak with the customer about their upcoming appointment.
@@ -133,16 +193,23 @@ Speak with the customer about their upcoming appointment.
 Politely ask whether they will attend.
 
 If they cannot attend, determine whether they want to cancel
+
 or request another time.
 
 Do not promise that a requested new time is confirmed.
 
 Return one structured outcome:
+
 confirmed
+
 cancelled
+
 reschedule_requested
+
 no_answer
+
 unknown
+
 ```
 
 ---
@@ -153,14 +220,21 @@ CALL-E results are converted into standardized appointment states.
 
 ConfirmCall supports:
 
-| Outcome                 | Meaning                            |
-| ----------------------- | ---------------------------------- |
-| ✅ Confirmed             | Customer intends to attend         |
-| ❌ Cancelled             | Customer cancelled                 |
-| 🟡 Reschedule Requested | Customer wants another time        |
-| ⚪ No Answer             | Customer could not be reached      |
-| 🔴 Needs Human          | Result requires manual review      |
-| ⏳ Pending               | Appointment has not been processed |
+\| Outcome                 | Meaning                            |
+
+\| ----------------------- | ---------------------------------- |
+
+\| ✅ Confirmed             | Customer intends to attend         |
+
+\| ❌ Cancelled             | Customer cancelled                 |
+
+\| 🟡 Reschedule Requested | Customer wants another time        |
+
+\| ⚪ No Answer             | Customer could not be reached      |
+
+\| 🔴 Needs Human          | Result requires manual review      |
+
+\| ⏳ Pending               | Appointment has not been processed |
 
 The decision engine intentionally separates conversation understanding from business actions.
 
@@ -177,14 +251,19 @@ ConfirmCall records that request but deliberately does **not** promise the slot 
 Example:
 
 ```text
+
 Customer:
+
 "Can I move it to Monday at 2 PM?"
 
 ConfirmCall result:
+
 reschedule_requested
 
 Requested time:
+
 Monday at 2:00 PM
+
 ```
 
 The request is written back to Google Calendar for review.
@@ -200,23 +279,35 @@ ConfirmCall includes a Streamlit dashboard providing a live operational view of 
 The dashboard displays:
 
 * total appointments,
+
 * confirmed appointments,
+
 * cancellations,
+
 * pending appointments,
+
 * appointments requiring action,
+
 * requested reschedule times,
+
 * confirmation rate,
+
 * estimated revenue protected,
+
 * and individual appointment statuses.
 
 Example:
 
 ```text
+
 ☎️ ConfirmCall
+
 AI Appointment Confirmation Agent
 
-Appointments   Confirmed   Cancelled   Pending   Needs Action
-     4             2           1          0           1
+Appointments   Confirmed   Cancelled   Pending   Needs Action
+
+     4             2           1          0           1
+
 ```
 
 ---
@@ -228,14 +319,19 @@ The dashboard converts technical results into business-facing metrics.
 Examples include:
 
 ```text
+
 Appointments Protected
+
 2
 
 Estimated Revenue Protected
+
 $200
 
 Confirmation Rate
+
 50%
+
 ```
 
 Revenue protection is clearly labeled as a demo estimate based on a configurable average appointment value.
@@ -248,38 +344,54 @@ ConfirmCall includes a repeatable demo workflow designed for testing and demonst
 
 Three demo appointments represent different real-world outcomes:
 
-| Customer   | Scenario              |
-| ---------- | --------------------- |
-| Alice Demo | Confirms appointment  |
-| Brian Demo | Cancels appointment   |
-| Clara Demo | Requests rescheduling |
+\| Customer   | Scenario              |
+
+\| ---------- | --------------------- |
+
+\| Alice Demo | Confirms appointment  |
+
+\| Brian Demo | Cancels appointment   |
+
+\| Clara Demo | Requests rescheduling |
 
 ### Before ConfirmCall
 
 ```text
-Alice Demo    ⏳ Pending
-Brian Demo    ⏳ Pending
-Clara Demo    ⏳ Pending
+
+Alice Demo    ⏳ Pending
+
+Brian Demo    ⏳ Pending
+
+Clara Demo    ⏳ Pending
+
 ```
 
 Click:
 
 ```text
+
 ☎️ Run ConfirmCall
+
 ```
 
 ### After ConfirmCall
 
 ```text
+
 Alice Demo
+
 ✅ Confirmed
 
 Brian Demo
+
 ❌ Cancelled
 
 Clara Demo
+
 🟡 Reschedule Requested
+
 Requested Time: Monday at 2:00 PM
+
 ```
 
 These results are written to the real Google Calendar integration.
@@ -287,7 +399,9 @@ These results are written to the real Google Calendar integration.
 The dashboard can then reset the appointments using:
 
 ```text
+
 🔄 Reset Demo
+
 ```
 
 allowing the demonstration to be repeated without manually editing Calendar events.
@@ -297,35 +411,37 @@ allowing the demonstration to be repeated without manually editing Calendar even
 # 🏗️ Architecture
 
 ```mermaid
+
 flowchart TD
 
-    A[Google Calendar] --> B[Calendar Scanner]
+    A[Google Calendar] --> B[Calendar Scanner]
 
-    B --> C[Appointment Parser]
+    B --> C[Appointment Parser]
 
-    C --> D[ConfirmCall Orchestrator]
+    C --> D[ConfirmCall Orchestrator]
 
-    D --> E[CALL-E Voice Agent]
+    D --> E[CALL-E Voice Agent]
 
-    E --> F[Structured Result]
+    E --> F[Structured Result]
 
-    F --> G[Decision Engine]
+    F --> G[Decision Engine]
 
-    G --> H[Calendar Writeback]
+    G --> H[Calendar Writeback]
 
-    H --> I[Streamlit Dashboard]
+    H --> I[Streamlit Dashboard]
 
-    F --> J{Outcome}
+    F --> J{Outcome}
 
-    J -->|Confirmed| K[✅ Confirmed]
+    J -->|Confirmed| K[✅ Confirmed]
 
-    J -->|Cancelled| L[❌ Cancelled]
+    J -->|Cancelled| L[❌ Cancelled]
 
-    J -->|Reschedule| M[🟡 Reschedule Request]
+    J -->|Reschedule| M[🟡 Reschedule Request]
 
-    J -->|No Answer| N[⚪ Follow Up]
+    J -->|No Answer| N[⚪ Follow Up]
 
-    J -->|Unknown| O[🔴 Human Review]
+    J -->|Unknown| O[🔴 Human Review]
+
 ```
 
 ---
@@ -339,7 +455,9 @@ ConfirmCall scans upcoming Google Calendar events.
 Only events containing:
 
 ```text
+
 CONFIRMCALL=true
+
 ```
 
 are processed.
@@ -351,14 +469,23 @@ are processed.
 Calendar metadata is transformed into an internal `Appointment` model containing:
 
 ```python
+
 event_id
+
 customer_name
+
 customer_phone
+
 service_name
+
 start_time
+
 status
+
 requested_time
+
 call_id
+
 ```
 
 ---
@@ -368,17 +495,25 @@ call_id
 ConfirmCall generates a personalized voice-agent task using:
 
 ```python
+
 build_call_task(appointment)
+
 ```
 
 The conversation includes:
 
 * customer name,
+
 * service,
+
 * appointment date,
+
 * appointment time,
+
 * confirmation request,
+
 * cancellation handling,
+
 * and rescheduling instructions.
 
 ---
@@ -388,21 +523,33 @@ The conversation includes:
 CALL-E is configured to return:
 
 ```json
+
 {
-  "outcome": "confirmed",
-  "requested_time": "",
-  "customer_notes": "Customer confirmed attendance."
+
+  "outcome": "confirmed",
+
+  "requested_time": "",
+
+  "customer_notes": "Customer confirmed attendance."
+
 }
+
 ```
 
 Supported values:
 
 ```text
+
 confirmed
+
 cancelled
+
 reschedule_requested
+
 no_answer
+
 unknown
+
 ```
 
 ---
@@ -412,7 +559,9 @@ unknown
 The structured result passes through:
 
 ```python
+
 apply_call_result()
+
 ```
 
 which converts the result into a standardized appointment status.
@@ -426,15 +575,21 @@ Google Calendar is updated automatically.
 Examples:
 
 ```text
+
 ✅ Haircut Appointment
+
 ```
 
 ```text
+
 ❌ Consultation
+
 ```
 
 ```text
+
 🟡 Service Visit
+
 ```
 
 ---
@@ -446,15 +601,25 @@ The Streamlit application reloads the Calendar data and displays the latest stat
 This creates a closed operational loop:
 
 ```text
+
 Calendar
-   ↓
+
+   ↓
+
 Conversation
-   ↓
+
+   ↓
+
 Decision
-   ↓
+
+   ↓
+
 Calendar
-   ↓
+
+   ↓
+
 Dashboard
+
 ```
 
 ---
@@ -466,13 +631,17 @@ ConfirmCall uses idempotency keys when creating CALL-E calls.
 The key is generated from:
 
 ```text
-confirmcall:<event_id>:<appointment_time>
+
+confirmcall:\<event_id>:\<appointment_time>
+
 ```
 
 Example:
 
 ```text
+
 confirmcall:abc123:2026-09-13T10:00:00+01:00
+
 ```
 
 This helps prevent the same appointment from accidentally creating duplicate calls.
@@ -483,27 +652,38 @@ ConfirmCall also checks appointment status and skips appointments that have alre
 
 # 🧪 Automated Testing
 
-ConfirmCall uses `pytest`.
+ConfirmCall uses `pytest` and currently has **10 passing automated tests** covering Calendar parsing, CALL-E task generation, and decision handling.
 
-Current decision-engine test suite:
+Current test suite:
 
 ```text
-test_confirmed
-test_cancelled
-test_reschedule_requested
-test_no_answer
-test_unknown_goes_to_human
+tests/test_calendar_service.py::test_confirmcall_event_is_parsed
+tests/test_calendar_service.py::test_reschedule_request_is_parsed
+tests/test_calendar_service.py::test_non_confirmcall_event_is_ignored
+tests/test_calendar_service.py::test_unknown_calendar_status_needs_human
+
+tests/test_calle_service.py::test_build_call_task_contains_appointment_details
+
+tests/test_decision.py::test_confirmed
+tests/test_decision.py::test_cancelled
+tests/test_decision.py::test_reschedule_requested
+tests/test_decision.py::test_no_answer
+tests/test_decision.py::test_unknown_goes_to_human
+```
+
+Run:
+
+```powershell
+python -m pytest -v
 ```
 
 Current result:
 
 ```text
-============================
-5 passed
-============================
+10 passed
 ```
 
-The tests verify that CALL-E outcomes are mapped correctly into appointment states.
+The tests verify that appointment metadata is parsed correctly, CALL-E tasks contain the required appointment context, unsupported/uncertain states fail safely, and structured outcomes are mapped into the correct appointment state.
 
 ---
 
@@ -512,7 +692,9 @@ The tests verify that CALL-E outcomes are mapped correctly into appointment stat
 ConfirmCall currently supports:
 
 ```python
+
 DRY_RUN = True
+
 ```
 
 When enabled, CALL-E conversation outcomes are simulated while the rest of the system remains real.
@@ -520,17 +702,29 @@ When enabled, CALL-E conversation outcomes are simulated while the rest of the s
 The following components still operate normally:
 
 ```text
+
 Real Google Calendar read
-        ↓
+
+        ↓
+
 Real appointment parser
-        ↓
+
+        ↓
+
 Simulated CALL-E result
-        ↓
+
+        ↓
+
 Real decision engine
-        ↓
+
+        ↓
+
 Real Google Calendar writeback
-        ↓
+
+        ↓
+
 Real dashboard update
+
 ```
 
 This allows the full workflow to be demonstrated repeatedly without placing unnecessary phone calls.
@@ -539,40 +733,64 @@ This allows the full workflow to be demonstrated repeatedly without placing unne
 
 # ☎️ Live CALL-E Support
 
-A production CALL-E adapter is implemented using:
+ConfirmCall includes a production CALL-E adapter built around:
 
 ```python
 CalleClient
 ```
 
-and:
+and the verified SDK workflow:
 
 ```python
 client.calls.create_and_wait(...)
 ```
 
-The integration supports:
+The service layer supports:
 
-* CALL-E API authentication,
-* recipient normalization,
-* task generation,
-* result schemas,
-* metadata,
-* idempotency,
-* status polling,
-* completed call retrieval,
-* structured result extraction,
-* and call ID persistence.
+- recipient normalization,
+- personalized task generation,
+- structured result schemas,
+- metadata,
+- deterministic idempotency keys,
+- status polling,
+- completed-call retrieval,
+- structured result extraction,
+- and call ID persistence.
 
-A dedicated live-call harness is included:
+A dedicated live-call harness is also included:
 
 ```text
 live_call_test.py
 ```
 
-It requires explicit confirmation before initiating the call.
+It requires explicit confirmation before initiating a call.
 
 > Live calls must use an authorized phone number in a CALL-E-supported calling region.
+
+## ✅ Live Runtime Validation
+
+ConfirmCall was also validated with **real outbound CALL-E calls** through the CALL-E CLI/OAuth path using an authorized recipient in a supported US region.
+
+Observed live behavior:
+
+```text
+CALL-E plan created              ✅
+Outbound call task created       ✅
+Phone rang                       ✅
+Call connected                   ✅
+Voice agent spoke                ✅
+Structured runtime result        ✅
+Call ID returned                 ✅
+No-answer/incomplete handling    ✅
+```
+
+The live recipient did not provide a final appointment decision during the validation attempts. ConfirmCall therefore did **not** claim a confirmation, cancellation, or reschedule that was never obtained.
+
+Instead, CALL-E returned an incomplete/no-answer style result, demonstrating the safe-failure behavior expected from the workflow.
+
+The full confirmed, cancelled, and reschedule-requested business flow is demonstrated in `DRY_RUN=True` mode, where Google Calendar reads and writebacks remain real while CALL-E outcomes are simulated for repeatability.
+
+No live recipient phone number, name, credentials, confirmation token, or raw call identifier is committed to this repository.
 
 ---
 
@@ -583,11 +801,17 @@ During development, the installed CALL-E SDK was inspected to verify the exact A
 Confirmed CALL-E call methods include:
 
 ```text
+
 create
+
 create_and_wait
+
 get
+
 list_events
+
 wait_for_result
+
 ```
 
 The application uses the verified `create_and_wait()` workflow.
@@ -595,9 +819,13 @@ The application uses the verified `create_and_wait()` workflow.
 The SDK normalizes:
 
 ```python
+
 {
-    "phone": "..."
+
+    "phone": "..."
+
 }
+
 ```
 
 into the recipient structure required by CALL-E.
@@ -644,9 +872,10 @@ confirmcall/
 │
 └── tests/
     ├── __init__.py
+    ├── test_calendar_service.py
+    ├── test_calle_service.py
     └── test_decision.py
 ```
-
 ---
 
 # 🛠️ Technology Stack
@@ -654,13 +883,17 @@ confirmcall/
 ### Backend
 
 * Python 3.12
+
 * CALL-E Python SDK
+
 * Google Calendar API
+
 * Google OAuth 2.0
 
 ### Frontend
 
 * Streamlit
+
 * Pandas
 
 ### Testing
@@ -674,8 +907,11 @@ confirmcall/
 ### Development
 
 * Git
+
 * GitHub
+
 * PowerShell
+
 * VS Code
 
 ---
@@ -685,8 +921,11 @@ confirmcall/
 Clone the repository:
 
 ```bash
+
 git clone https://github.com/pmman-sudo/confirmcall.git
+
 cd confirmcall
+
 ```
 
 Create a virtual environment:
@@ -694,14 +933,19 @@ Create a virtual environment:
 ### Windows
 
 ```powershell
+
 python -m venv .venv
+
 .venv\Scripts\Activate.ps1
+
 ```
 
 Install dependencies:
 
 ```powershell
+
 python -m pip install -r requirements.txt
+
 ```
 
 ---
@@ -711,18 +955,23 @@ python -m pip install -r requirements.txt
 Copy:
 
 ```text
+
 .env.example
+
 ```
 
 to:
 
 ```text
+
 .env
+
 ```
 
 Configure:
 
 ```env
+
 CALLE_API_KEY=your_calle_api_key_here
 
 CALLE_TEST_PHONE=your_authorized_test_number_here
@@ -730,6 +979,7 @@ CALLE_TEST_PHONE=your_authorized_test_number_here
 CALLE_REGION=
 
 CALLE_LOCALE=
+
 ```
 
 Never commit `.env`.
@@ -749,7 +999,9 @@ Create a project in Google Cloud Console.
 Enable:
 
 ```text
+
 Google Calendar API
+
 ```
 
 ---
@@ -763,7 +1015,9 @@ Download the OAuth credentials file.
 Rename it:
 
 ```text
+
 credentials.json
+
 ```
 
 Place it in the project root.
@@ -775,7 +1029,9 @@ Place it in the project root.
 Run:
 
 ```powershell
+
 python test_calendar.py
+
 ```
 
 A browser window opens for Google authorization.
@@ -783,7 +1039,9 @@ A browser window opens for Google authorization.
 After successful authentication:
 
 ```text
+
 token.json
+
 ```
 
 is generated automatically.
@@ -795,7 +1053,9 @@ is generated automatically.
 ## Run the CLI Workflow
 
 ```powershell
+
 python app.py
+
 ```
 
 ---
@@ -803,13 +1063,17 @@ python app.py
 ## Run the Dashboard
 
 ```powershell
+
 python -m streamlit run dashboard\dashboard.py
+
 ```
 
 Then visit:
 
 ```text
+
 http://localhost:8501
+
 ```
 
 ---
@@ -819,15 +1083,21 @@ http://localhost:8501
 Create the demo appointments:
 
 ```powershell
+
 python seed_demo_events.py
+
 ```
 
 This creates:
 
 ```text
+
 Alice Demo
+
 Brian Demo
+
 Clara Demo
+
 ```
 
 in Google Calendar.
@@ -839,20 +1109,27 @@ in Google Calendar.
 The dashboard provides:
 
 ```text
+
 🔄 Reset Demo
+
 ```
 
 This restores the three demo appointments to:
 
 ```text
+
 STATUS=pending
+
 ```
 
 and removes previous:
 
 ```text
+
 REQUESTED_TIME
+
 CALL_ID
+
 ```
 
 values.
@@ -864,7 +1141,9 @@ values.
 From the dashboard:
 
 ```text
+
 ☎️ Run ConfirmCall
+
 ```
 
 ConfirmCall scans pending appointments and processes each one.
@@ -882,7 +1161,7 @@ python -m pytest -v
 Expected:
 
 ```text
-5 passed
+10 passed
 ```
 
 ---
@@ -894,20 +1173,26 @@ Sensitive credentials are excluded through `.gitignore`.
 The following files must never be committed:
 
 ```text
+
 .env
+
 credentials.json
+
 token.json
+
 ```
 
 ConfirmCall includes:
 
 ```text
+
 .env.example
+
 ```
 
 containing placeholders only.
 
-All demo customer information is fictional.
+All demo customer information is fictional. Real live-test recipient details are kept private and are never committed to the repository.
 
 ---
 
@@ -954,24 +1239,39 @@ ConfirmCall could evolve into a SaaS product for appointment-based businesses.
 Possible plans could eventually be based on:
 
 * monthly appointment volume,
+
 * number of business locations,
+
 * call volume,
+
 * team members,
+
 * integrations,
+
 * analytics,
+
 * and automated rescheduling.
 
 Potential customer segments include:
 
 ```text
+
 Salons
+
 Barbers
+
 Consultants
+
 Home-service providers
+
 Repair businesses
+
 Tutors
+
 Professional services
+
 Appointment-based SMBs
+
 ```
 
 ---
@@ -980,28 +1280,31 @@ Appointment-based SMBs
 
 ## Phase 1 — Hackathon MVP
 
-* [x] Google Calendar authentication
-* [x] Calendar event scanning
-* [x] Appointment metadata parsing
-* [x] Appointment domain model
-* [x] CALL-E SDK integration
-* [x] Structured result schema
-* [x] Confirmation handling
-* [x] Cancellation handling
-* [x] Reschedule-request handling
-* [x] No-answer handling
-* [x] Human escalation
-* [x] Calendar writeback
-* [x] CALL-ID persistence
-* [x] Requested-time persistence
-* [x] Duplicate-processing protection
-* [x] Idempotency support
-* [x] Streamlit dashboard
-* [x] Demo reset workflow
-* [x] Business metrics
-* [x] Automated tests
-* [x] Live-call test harness
-* [ ] Authorized supported-region live CALL-E call
+- [x] Google Calendar authentication
+- [x] Calendar event scanning
+- [x] Appointment metadata parsing
+- [x] Appointment domain model
+- [x] CALL-E SDK integration
+- [x] Structured result schema
+- [x] Confirmation handling
+- [x] Cancellation handling
+- [x] Reschedule-request handling
+- [x] No-answer handling
+- [x] Human escalation
+- [x] Calendar writeback
+- [x] CALL-ID persistence
+- [x] Requested-time persistence
+- [x] Duplicate-processing protection
+- [x] Idempotency support
+- [x] Streamlit dashboard
+- [x] Demo reset workflow
+- [x] Business metrics
+- [x] 10 automated tests
+- [x] Live-call test harness
+- [x] Authorized supported-region CALL-E live runtime validation
+- [x] Real call connection and structured runtime result validation
+- [x] Contribution pull request submitted to CALL-E (`#515`)
+- [ ] Directly feed a successful live human appointment decision into the Calendar writeback path
 
 ---
 
@@ -1010,9 +1313,13 @@ Appointment-based SMBs
 Planned:
 
 * calendar availability checking,
+
 * automatic slot suggestions,
+
 * business-hours validation,
+
 * conflict detection,
+
 * confirmed rescheduling.
 
 ---
@@ -1022,8 +1329,11 @@ Planned:
 Potential integrations:
 
 * SMS,
+
 * email,
+
 * WhatsApp,
+
 * CRM systems.
 
 ---
@@ -1033,15 +1343,25 @@ Potential integrations:
 Future capabilities:
 
 * multi-business accounts,
+
 * team dashboards,
+
 * configurable conversation scripts,
+
 * appointment analytics,
+
 * no-show analytics,
+
 * custom appointment values,
+
 * scheduled calling windows,
+
 * retry policies,
+
 * webhook processing,
+
 * multi-calendar support,
+
 * role-based access control.
 
 ---
@@ -1060,6 +1380,10 @@ ConfirmCall focuses on one specific business problem:
 
 Rather than stopping after the AI call, ConfirmCall closes the loop by updating the business's existing calendar automatically.
 
+Submission contribution:
+
+- **CALL-E PR #515:** https://github.com/CALLE-AI/awesome-phone-call-agents/pull/515
+
 ---
 
 # 🎯 Why ConfirmCall Matters
@@ -1071,15 +1395,25 @@ The value is not simply:
 The value is:
 
 ```text
+
 AI discovers an operational task
-        ↓
+
+        ↓
+
 AI performs the conversation
-        ↓
+
+        ↓
+
 AI understands the customer's decision
-        ↓
+
+        ↓
+
 AI converts it into structured data
-        ↓
+
+        ↓
+
 AI updates the business workflow
+
 ```
 
 That moves the system from an AI caller toward an **AI operations agent**.
@@ -1096,30 +1430,35 @@ That moves the system from an AI caller toward an **AI operations agent**.
 ✅ Calendar parsing
 ✅ Appointment state model
 ✅ CALL-E SDK integration
+✅ CALL-E CLI/OAuth live runtime path
 ✅ CALL-E authentication
 ✅ CALL-E task generation
 ✅ Structured CALL-E result schema
+✅ Real outbound CALL-E call execution
+✅ Real call ringing and connection
+✅ Structured live runtime result retrieval
+✅ No-answer / incomplete-call handling
 ✅ Decision engine
 ✅ Calendar writeback
 ✅ Requested-time persistence
 ✅ Call-ID persistence
-✅ Duplicate processing prevention
-✅ Idempotency
+✅ Duplicate-processing prevention
+✅ Deterministic idempotency
 ✅ Streamlit dashboard
 ✅ Business-impact metrics
 ✅ Demo reset
 ✅ Dashboard-triggered automation
-✅ Automated tests
+✅ 10 automated tests
 ✅ Live-call test harness
+✅ CALL-E contribution PR #515
 ```
 
-### Remaining before final production validation
+### Production follow-up
 
 ```text
-⏳ Complete one authorized live CALL-E call
-⏳ Validate production structured result against the live call
-⏳ Record final demo video
-⏳ Submit contribution PR
+⏳ Connect a successful live human confirm/cancel/reschedule result directly into the Calendar writeback path
+⏳ Add conflict-aware automatic rescheduling
+⏳ Add production monitoring and webhook-based processing
 ```
 
 ---
