@@ -3,7 +3,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 import streamlit as st
 
-from app import process_appointment
+from app import DRY_RUN, process_appointment
 
 from models.appointment import AppointmentStatus
 from services.calendar_service import (
@@ -21,13 +21,26 @@ st.set_page_config(
     layout="wide",
 )
 
+if "last_action" not in st.session_state:
+    st.session_state["last_action"] = (
+        "No dashboard action has been run in this session."
+    )
+
+if DRY_RUN:
+    st.warning(
+        "🟡 DEMO MODE — CALL-E outcomes are simulated. "
+        "Google Calendar reads and writebacks are real."
+    )
+else:
+    st.success(
+        "🟢 LIVE MODE — ConfirmCall will place real CALL-E calls."
+    )
 
 st.title("☎️ ConfirmCall")
 st.subheader("AI Appointment Confirmation Agent")
 
 st.caption(
-    "Autonomous appointment confirmation and recovery "
-    "for service businesses."
+    f"Last action: {st.session_state['last_action']}"
 )
 
 st.info(
@@ -180,7 +193,6 @@ for appointment in appointments:
 
 
 if rows:
-
     dataframe = pd.DataFrame(rows)
 
     st.dataframe(
@@ -190,11 +202,45 @@ if rows:
     )
 
 else:
-
     st.info(
         "No ConfirmCall appointments found "
         "in the next 48 hours."
     )
+
+st.divider()
+
+st.subheader("Automation Audit")
+
+st.caption(
+    "Call IDs provide traceability between appointment outcomes "
+    "and the voice-agent execution that produced them."
+)
+
+audit_rows = []
+
+for appointment in appointments:
+    audit_rows.append(
+        {
+            "Customer": appointment.customer_name,
+            "Service": appointment.service_name,
+            "Status": appointment.status.value,
+            "Requested Time": (
+                appointment.requested_time or "-"
+            ),
+            "Call ID": (
+                appointment.call_id or "-"
+            ),
+        }
+    )
+
+if audit_rows:
+    audit_df = pd.DataFrame(audit_rows)
+
+    st.dataframe(
+        audit_df,
+        width="stretch",
+        hide_index=True,
+    )    
 
 
 st.divider()
@@ -204,23 +250,24 @@ left, right = st.columns(2)
 
 with left:
 
-    st.subheader("Automation")
+    st.subheader("How It Works")
 
     st.write(
-        "ConfirmCall scans upcoming appointments, "
-        "contacts customers through CALL-E, "
-        "and writes the outcome back to Google Calendar."
+        "ConfirmCall reads upcoming Google Calendar appointments, "
+        "processes customer confirmation outcomes, applies a structured "
+        "decision, and writes the result back to Google Calendar."
     )
 
 
 with right:
 
-    st.subheader("Current Demo")
+    st.subheader("Current Demo Status")
 
     st.write(
-        "The Calendar and decision engine are live. "
-        "Phone outcomes are currently simulated while "
-        "the live CALL-E test number is being resolved."
+        "Google Calendar, the decision engine, writeback, "
+        "and dashboard are live. CALL-E planning has been "
+        "successfully validated with a supported US number. "
+        "The final live phone call is pending recipient availability."
     )
 
 
@@ -249,7 +296,7 @@ with reset_col:
 
             count = reset_demo_appointments()
 
-        st.success(
+        st.session_state["last_action"] = (
             f"Reset {count} demo appointment(s) to pending."
         )
 
@@ -257,6 +304,7 @@ with reset_col:
 
 
 with run_col:
+
 
     if st.button(
         "☎️ Run ConfirmCall",
@@ -279,10 +327,12 @@ with run_col:
         else:
 
             progress = st.progress(0)
-
             status_box = st.empty()
 
             total = len(pending)
+
+            successful = 0
+            failed = 0
 
             for index, appointment in enumerate(
                 pending,
@@ -295,20 +345,31 @@ with run_col:
                     f"{appointment.service_name}"
                 )
 
-                process_appointment(
+                result = process_appointment(
                     appointment
                 )
+
+                if result and result.get("success"):
+                    successful += 1
+                else:
+                    failed += 1
 
                 progress.progress(
                     index / total
                 )
 
-            status_box.success(
-                f"Processed {total} appointment(s)."
-            )
+            if failed == 0:
 
-            st.success(
-                "Google Calendar updated successfully."
-            )
+                st.session_state["last_action"] = (
+                    f"Processed {successful} appointment(s) "
+                    "successfully."
+                )
+
+            else:
+
+                st.session_state["last_action"] = (
+                    f"Processed {successful} successfully. "
+                    f"{failed} require human review."
+                )
 
             st.rerun()

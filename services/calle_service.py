@@ -1,5 +1,7 @@
 import os
 
+from zoneinfo import ZoneInfo
+
 from calle import CalleClient
 from dotenv import load_dotenv
 
@@ -9,6 +11,10 @@ from services.decision_service import CallResult
 
 load_dotenv()
 
+
+BUSINESS_TIMEZONE = ZoneInfo(
+    os.getenv("BUSINESS_TIMEZONE", "Africa/Lagos")
+)
 
 RESULT_SCHEMA = {
     "type": "object",
@@ -39,7 +45,11 @@ RESULT_SCHEMA = {
 
 
 def build_call_task(appointment: Appointment) -> str:
-    appointment_time = appointment.start_time.strftime(
+    local_start_time = appointment.start_time.astimezone(
+        BUSINESS_TIMEZONE
+    )
+
+    appointment_time = local_start_time.strftime(
         "%A, %B %d at %I:%M %p"
     )
 
@@ -79,7 +89,8 @@ def make_confirmation_call(
         )
 
     client = CalleClient(
-        api_key=api_key
+        api_key=api_key,
+        base_url="https://api.heycall-e.com",
     )
 
     recipient = {
@@ -99,7 +110,7 @@ def make_confirmation_call(
     call = client.calls.create_and_wait(
         task=build_call_task(appointment),
         recipient=recipient,
-        result_schema=RESULT_SCHEMA,
+        recipient_result_schema=RESULT_SCHEMA,
         metadata={
             "source": "confirmcall",
             "event_id": appointment.event_id,
@@ -127,27 +138,22 @@ def make_confirmation_call(
             call_id=call_id,
         )
 
-    structured_result = (
-        call.get("structured_result")
-        or {}
-    )
+    structured_result = {}
 
-    # Defensive fallback in case CALL-E returns the
-    # schema result at recipient level.
-    if not structured_result:
+    recipients = call.get("recipients") or []
 
-        recipients = (
-            call.get("recipients")
-            or []
+    if recipients:
+        structured_result = (
+            recipients[0].get("structured_result")
+            or {}
         )
 
-        if recipients:
-            structured_result = (
-                recipients[0].get(
-                    "structured_result"
-                )
-                or {}
-            )
+    # Defensive fallback.
+    if not structured_result:
+        structured_result = (
+            call.get("structured_result")
+            or {}
+        )
 
     outcome = (
         structured_result.get(

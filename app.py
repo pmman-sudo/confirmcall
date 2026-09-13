@@ -71,35 +71,100 @@ def process_appointment(appointment):
     print(f"Status: {appointment.status.value}")
 
     if appointment.status != AppointmentStatus.PENDING:
-        print("Skipping: appointment already processed.")
-        return
+        print(
+            "Skipping: appointment already processed."
+        )
+        return {
+            "success": True,
+            "skipped": True,
+            "status": appointment.status.value,
+        }
 
-    if DRY_RUN:
-        print("DRY RUN: simulating CALL-E conversation.")
+    try:
 
-        result = get_demo_result(appointment)
+        if DRY_RUN:
+            print(
+                "DRY RUN: simulating CALL-E conversation."
+            )
 
-    else:
-        print("Starting CALL-E call...")
-        result = make_confirmation_call(appointment)
+            result = get_demo_result(
+                appointment
+            )
 
-    print(f"Call outcome: {result.outcome}")
+        else:
+            print(
+                "Starting CALL-E call..."
+            )
 
-    if result.requested_time:
-        print(f"Requested time: {result.requested_time}")
+            result = make_confirmation_call(
+                appointment
+            )
 
-    updated = apply_call_result(
-        appointment,
-        result,
-    )
+        print(
+            f"Call outcome: {result.outcome}"
+        )
 
-    update_calendar_event(updated)
+        if result.requested_time:
+            print(
+                f"Requested time: "
+                f"{result.requested_time}"
+            )
 
-    print(
-        f"Calendar updated: "
-        f"{updated.status.value}"
-    )
+        updated = apply_call_result(
+            appointment,
+            result,
+        )
 
+        update_calendar_event(
+            updated
+        )
+
+        print(
+            f"Calendar updated: "
+            f"{updated.status.value}"
+        )
+
+        return {
+            "success": True,
+            "skipped": False,
+            "status": updated.status.value,
+            "call_id": updated.call_id,
+        }
+
+    except Exception as exc:
+
+        print(
+            f"ERROR processing "
+            f"{appointment.customer_name}: {exc}"
+        )
+
+        appointment.status = (
+            AppointmentStatus.NEEDS_HUMAN
+        )
+
+        try:
+            update_calendar_event(
+                appointment
+            )
+
+            print(
+                "Appointment marked for human review."
+            )
+
+        except Exception as calendar_exc:
+            print(
+                "WARNING: Could not update Calendar "
+                f"after failure: {calendar_exc}"
+            )
+
+        return {
+            "success": False,
+            "skipped": False,
+            "status": (
+                AppointmentStatus.NEEDS_HUMAN.value
+            ),
+            "error": str(exc),
+        }
 
 def main():
     print()
@@ -113,16 +178,59 @@ def main():
 
     print(
         f"Found {len(appointments)} "
-        f"ConfirmCall appointment(s)."
+        "ConfirmCall appointment(s)."
     )
 
+    results = []
+
     for appointment in appointments:
-        process_appointment(appointment)
+        result = process_appointment(
+            appointment
+        )
+
+        if result:
+            results.append(result)
+
+    successful = sum(
+        1
+        for result in results
+        if result.get("success")
+        and not result.get("skipped")
+    )
+
+    skipped = sum(
+        1
+        for result in results
+        if result.get("skipped")
+    )
+
+    failed = sum(
+        1
+        for result in results
+        if not result.get("success")
+    )
 
     print()
     print("=" * 60)
+    print("CONFIRMCALL RUN SUMMARY")
+    print("=" * 60)
+
+    print(
+        f"Processed successfully: {successful}"
+    )
+
+    print(
+        f"Skipped: {skipped}"
+    )
+
+    print(
+        f"Needs human review: {failed}"
+    )
+
+    print()
     print("ConfirmCall run complete.")
 
 
 if __name__ == "__main__":
     main()
+    
